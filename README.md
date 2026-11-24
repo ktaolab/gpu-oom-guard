@@ -70,7 +70,7 @@ Uninstall: `sudo ./install.sh --uninstall`.
 
 Optional extras that keep the machine reachable, or bring it back, if the guard isn't enough:
 
-- **tailscaled / sshd drop-ins:** `Restart=always`, `OOMScoreAdjust=-900`, `MemoryMin=256M`.
+- **tailscaled / sshd drop-ins:** `Restart=always`, `OOMScoreAdjust=-900`, `MemoryMin=256M`. Applied to the running daemons without restarting them, so an SSH or Tailscale SSH session running the installer stays up.
 - **Hardware watchdog** (if `/dev/watchdog` exists): `RuntimeWatchdogSec=2min`, so a fully hung kernel reboots itself.
 - **sysctl:** `vm.min_free_kbytes=1GiB`, `vm.watermark_scale_factor=100`, to start reclaim earlier and keep a reserve. Scale to about 1% of RAM.
 

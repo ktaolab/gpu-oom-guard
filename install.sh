@@ -21,6 +21,7 @@ if [ "${1:-}" = "--with-hardening" ]; then
   for u in tailscaled.service ssh.service sshd.service; do
     if systemctl cat "$u" >/dev/null 2>&1; then
       install -D -m 644 hardening/vpn-ssh-resilience.conf "/etc/systemd/system/$u.d/90-resilience.conf"
+      HARDENED="${HARDENED:-} $u"
       echo "hardened $u"
     fi
   done
@@ -32,7 +33,14 @@ if [ "${1:-}" = "--with-hardening" ]; then
   fi
   install -m 644 hardening/90-gpu-oom-guard.sysctl.conf /etc/sysctl.d/90-gpu-oom-guard.conf
   sysctl -q -p /etc/sysctl.d/90-gpu-oom-guard.conf
-  echo "note: restart hardened services yourself when convenient (e.g. systemctl restart tailscaled)"
+  # Apply live rather than restarting: restarting tailscaled/sshd would drop the SSH
+  # session this installer is probably running in. Restart= is live after daemon-reload.
+  systemctl daemon-reload
+  for u in ${HARDENED:-}; do
+    pid=$(systemctl show -p MainPID --value "$u")
+    systemctl set-property --runtime "$u" MemoryMin=256M || true
+    [ "${pid:-0}" != 0 ] && command -v choom >/dev/null && choom -p "$pid" -n -900 >/dev/null || true
+  done
 fi
 
 systemctl daemon-reload
