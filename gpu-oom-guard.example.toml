@@ -1,0 +1,33 @@
+# Copy to /etc/gpu-oom-guard.toml. All keys optional; shown values are defaults.
+
+warn_avail_gib = 12.0   # log a warning when MemAvailable drops below this
+kill_avail_gib = 6.0    # kill when MemAvailable is below this AND...
+kill_psi_full  = 20.0   # ...memory PSI "full avg10" is above this (system is stalling)
+hard_avail_gib = 3.0    # kill unconditionally below this
+interval       = 1.0    # seconds between checks
+sample_every   = 5.0    # seconds between nvidia-smi samples (cached for when it hangs)
+cooldown       = 15.0   # minimum seconds between kills
+sigterm_grace  = 0.0    # >0: SIGTERM first and wait this long; 0: SIGKILL immediately
+wall           = true   # broadcast kills to logged-in terminals
+dry_run        = false
+
+# Never killed (process comm names). protected_extra appends to the built-in list;
+# use `protected = [...]` to replace it entirely.
+protected_extra = []
+
+# Kill order: rules are matched in order against the process's cgroup path
+# (shell-style globs); first match wins. Lower tier dies first, then larger GPU
+# usage first within a tier. Setting tier_rules replaces the defaults, which are:
+#
+# [[tier_rules]]  match = "*/docker-*"        tier = 1
+# [[tier_rules]]  match = "*/docker/*"        tier = 1
+# [[tier_rules]]  match = "*/libpod-*"        tier = 1
+# [[tier_rules]]  match = "*/ollama.service"  tier = 1
+# [[tier_rules]]  match = "*.scope"           tier = 0   # tmux, ssh sessions, apps
+# [[tier_rules]]  match = "*/session-*"       tier = 0
+# [[tier_rules]]  match = "*.service"         tier = 2
+#
+# Example: make a render server the last thing to go.
+# [[tier_rules]]
+# match = "*/comfyui.service"
+# tier = 3

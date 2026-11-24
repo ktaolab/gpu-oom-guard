@@ -1,0 +1,17 @@
+[Unit]
+Description=Early OOM killer for unified-memory NVIDIA GPUs
+Documentation=https://github.com/ktaolab/gpu-oom-guard
+After=multi-user.target
+
+[Service]
+ExecStart=/usr/bin/python3 -I /usr/local/sbin/gpu-oom-guard
+Restart=always
+RestartSec=2
+Nice=-20
+OOMScoreAdjust=-1000
+MemoryMin=64M
+LimitMEMLOCK=infinity
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
