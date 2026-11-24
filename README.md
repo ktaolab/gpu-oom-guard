@@ -80,7 +80,7 @@ Each file is in [`hardening/`](hardening/), so you can install them by hand inst
 
 Copy [`gpu-oom-guard.example.toml`](gpu-oom-guard.example.toml) to `/etc/gpu-oom-guard.toml` (needs Python ≥ 3.11 for TOML; CLI flags work on Python ≥ 3.10) and `systemctl restart gpu-oom-guard`.
 
-Example: never touch a render server unless nothing else is left:
+Example: make a long-running render or training service the last thing to go:
 
 ```toml
 kill_avail_gib = 8
@@ -89,7 +89,7 @@ kill_avail_gib = 8
 match = "*/docker-*"
 tier = 1
 [[tier_rules]]
-match = "*/comfyui.service"
+match = "*/render-server.service"
 tier = 3
 [[tier_rules]]
 match = "*.scope"

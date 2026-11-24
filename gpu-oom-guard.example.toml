@@ -27,7 +27,7 @@ protected_extra = []
 # [[tier_rules]]  match = "*/session-*"       tier = 0
 # [[tier_rules]]  match = "*.service"         tier = 2
 #
-# Example: make a render server the last thing to go.
+# Example: make a long-running render or training service the last thing to go.
 # [[tier_rules]]
-# match = "*/comfyui.service"
+# match = "*/render-server.service"
 # tier = 3

@@ -19,7 +19,7 @@ class TierTests(unittest.TestCase):
     def test_ollama(self):
         self.assertEqual(self.t("/system.slice/ollama.service"), 1)
     def test_user_service(self):
-        self.assertEqual(self.t("/user.slice/user-1000.slice/user@1000.service/app.slice/comfyui.service"), 2)
+        self.assertEqual(self.t("/user.slice/user-1000.slice/user@1000.service/app.slice/my-app.service"), 2)
     def test_unmatched_default(self):
         self.assertEqual(self.t("/"), 0)
 
